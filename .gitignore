@@ -1,0 +1,5 @@
+*.pdf
+./samples/*.pdf
+
+# agregar el venv al gitignore
+venv/

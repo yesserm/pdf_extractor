@@ -9,6 +9,7 @@ def main():
     args = parser.parse_args()
     
     print(f"Input file: {args.input}")
+    
     if args.output:
         print(f"Output file: {args.output}")
     if args.pages:
