@@ -3,3 +3,19 @@
 
 # agregar el venv al gitignore
 venv/
+
+# ignorar ficheros pyc y __pycache__ pyx
+__pycache__/
+*.pyc
+*.pyo
+*.pdb
+*.pyd
+*.egg-info/
+*.pyx
+*.c
+
+setup.py
+
+dist/
+build/
+*.spec

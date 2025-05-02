@@ -3,6 +3,9 @@ from pdfminer.high_level import extract_text
 from pdfminer.layout import LAParams
 from collections import defaultdict
 import re
+import unicodedata
+import string
+import json
 
 def configurar_laparams():
     return LAParams(
@@ -50,6 +53,17 @@ def agrupar_por_posicion(words):
 def format_float(number):
     return float("{:.1f}".format(number))
 
+def normalize_to_snake_case(text):
+    text = text.lower().replace(':', '').replace('®', '')
+    text = re.sub(r"\b(\w+)'s\b", r"\1s", text)
+    text = unicodedata.normalize('NFD', text)
+    text = ''.join(c if c in string.ascii_lowercase + string.digits else ' ' for c in text)
+    text = re.sub(r'\s+', '_', text)
+    text = text.strip('_')
+    text = text.replace(' ', '_').lower()
+    return text.lower()
+
+
 def create_key(init, words):
     key = ''
     limit = -1 
@@ -66,8 +80,8 @@ def create_key(init, words):
             key = words[i].get('text', '') + ' ' + key
         else:
             break
-        
-    return key.strip()
+    return normalize_to_snake_case(key.strip())
+
 
 def create_value(init, words):
     value = ''
@@ -97,13 +111,12 @@ def procesar_documento(document_path):
     keys = dict()
     
     for index, word in enumerate(words):
-        if ':' not in word.get('text', '') or word.get('text', '').count(':') != 1: 
+        text = word.get('text', '')
+        if ':' not in text or text.count(':') != 1: 
             continue
 
-        key = create_key(index, words) + ' ' + word.get('text', '')
+        key = create_key(index, words) + '_' + text.split(':')[0].lower()  # Convertir la parte antes de los dos puntos a minúsculas
         value = create_value(index, words)
         keys[key.strip()] = value.strip()
 
-    print(keys)
-
-procesar_documento("./samples/id.pdf")
+    return json.dumps(keys, indent=4, ensure_ascii=False)

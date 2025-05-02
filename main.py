@@ -1,4 +1,5 @@
 import argparse
+import association
 
 def main():
     parser = argparse.ArgumentParser(description="PDF Extractor Tool")
@@ -7,8 +8,10 @@ def main():
     parser.add_argument('-p', '--pages', required=False, help="Pages to extract (e.g., 1,2,3 or 1-3)")
     
     args = parser.parse_args()
-    
-    print(f"Input file: {args.input}")
+    if args.input:
+        document_path = args.input
+        processed_document = association.procesar_documento(document_path)
+        print(f"Processed document: {processed_document}")
     
     if args.output:
         print(f"Output file: {args.output}")
