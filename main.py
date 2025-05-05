@@ -1,5 +1,7 @@
 import argparse
 import association
+from rich import print_json
+import json
 
 def main():
     parser = argparse.ArgumentParser(description="PDF Extractor Tool")
@@ -11,12 +13,11 @@ def main():
     if args.input:
         document_path = args.input
         processed_document = association.procesar_documento(document_path)
-        print(f"Processed document: {processed_document}")
+        print("""
+        █ Extractor de PDF - Versión 1.0 █
+        """)
+        print_json(json.dumps(processed_document, indent=4, ensure_ascii=False))
     
-    if args.output:
-        print(f"Output file: {args.output}")
-    if args.pages:
-        print(f"Pages to extract: {args.pages}")
 
 if __name__ == "__main__":
     main()
