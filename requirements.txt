@@ -1,2 +1,2 @@
-pdfplumber=0.11.6
-rich=10.14.0
+pdfplumber==0.11.6
+rich==10.14.0
