@@ -70,7 +70,9 @@ def procesar_documento(document_path):
             "deductible": r"Non-Participating\s*\n\s*(.*?)\s*\nThe information",
             "class_i_preventive_and_diagnostic_services": r"Class I Preventive and Diagnostic Services\s*\d+% \d+% \d+%\s*(.+?)Class II",
             "class_ii_basic_services": r"Class II Basic Services\s*\d+% \d+% \d+%\s*(.+?)Class III",
-            "class_iii_major_restorative_services": r"Class III Major Restorative Services\s*\d+% \d+% \d+%\s*Crowns\s*(.+?)Implants",
+            #"class_iii_major_restorative_services": r"Class III Major Restorative Services\s*\d+% \d+% \d+%\s*\n\s*(.+?)Implants",
+            #"class_iii_major_restorative_services": r"Crowns\s*(.*?)\s*Implants(?!(?:.*?\nP\.O\. Box.*?Delta Dental of Idaho))",
+            "class_iii_major_restorative_services": r"(?:\nP\.O\. Box.*?Delta Dental of Idaho\n)?Class III Major Restorative Services\s*\d+% \d+% \d+%\s*(.*?)\s*\nImplants(?:\s*\nP\.O\. Box.*?Delta Dental of Idaho)?",
             "implants": r"Implants\s*\d+% \d+% \d+%\s*(.+?)Orthodontic Services",
             "orthodontic_services_child": r"Orthodontic Services Child Only\s*\d+% \d+% \d+%\s*(.+?)Dependents",
             "dependents": r"Dependents\s*(.+?)\nHOW® Benefits",
@@ -112,6 +114,13 @@ def procesar_documento(document_path):
         # Limpieza final
         result["wait_period"] = f"{result.get('wait_period', '')} Ortho" if result.get('wait_period') == "None" else ""
         result["enhanced_dental"] = result["enhanced_dental"].replace("Dentals:", "").strip()
+        result["class_iii_major_restorative_services"] = re.sub(r"^P\.O\. Box.*?Delta Dental of Idaho\s*", "", result["class_iii_major_restorative_services"], flags=re.DOTALL)
+        result["class_iii_major_restorative_services"] = re.sub(
+            r"P\.O\. Box.*?Delta Dental of Idaho\s*$",
+            "",
+            result["class_iii_major_restorative_services"],
+            flags=re.DOTALL
+        )
 
     return result
 
